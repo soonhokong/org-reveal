@@ -63,6 +63,10 @@
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
+    (:reveal-title-image "REVEAL_TITLE_IMG" nil org-reveal-title-image t)
+    (:reveal-title-image-width "REVEAL_TITLE_IMG_WIDTH" nil org-reveal-title-image-width t)
+    (:reveal-webpage "REVEAL_WEBPAGE" nil org-reveal-webpage t)
+    (:reveal-venue "REVEAL_VENUE" nil org-reveal-venue t)
     )
 
   :translate-alist
@@ -99,10 +103,12 @@ else get value from custom variable `org-reveal-hlevel'."
       org-reveal-hlevel)))
 
 (defcustom org-reveal-title-slide-template
-  "<h1>%t</h1>
-<h2>%a</h2>
-<h2>%e</h2>
-<h2>%d</h2>"
+  "<h1><img src=%i width=%w></h1>
+<h3><small>%a</small></h3>
+<p><small>%d, %v</small><br/>
+<small><a href=\"%p\">%p</a></small>
+</p>
+"
   "Format template to specify title page slide.
 See `org-html-postamble-format' for the valid elements which
 can be include."
@@ -213,6 +219,25 @@ can be include."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-title-image "-1"
+  "Title image"
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-title-image-width "-1"
+  "Title image width"
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-webpage "-1"
+  "Webpage"
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-venue "-1"
+  "Venue"
+  :group 'org-export-reveal
+  :type 'string)
 
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
@@ -613,6 +638,30 @@ the plist used as a communication channel."
                            (org-export-read-attribute :attr_reveal paragraph :frag))
                 contents)))))
 
+(defun reveal-html-format-spec (info)
+  "Return format specification for elements that can be
+used in the preamble or postamble."
+  `((?t . ,(org-export-data (plist-get info :title) info))
+    (?i . ,(plist-get info :reveal-title-image))
+    (?w . ,(plist-get info :reveal-title-image-width))
+    (?v . ,(plist-get info :reveal-venue))
+    (?p . ,(org-element-interpret-data (plist-get info :reveal-webpage)))
+    (?d . ,(org-export-data (org-export-get-date info) info))
+    (?T . ,(format-time-string org-html-metadata-timestamp-format))
+    (?a . ,(org-export-data (plist-get info :author) info))
+    (?e . ,(mapconcat
+            (lambda (e)
+              (format "<a href=\"mailto:%s\">%s</a>" e e))
+            (split-string (plist-get info :email)  ",+ *")
+            ", "))
+    (?c . ,(plist-get info :creator))
+    (?C . ,(let ((file (plist-get info :input-file)))
+             (format-time-string org-html-metadata-timestamp-format
+                                 (if file (nth 5 (file-attributes file))
+                                   (current-time)))))
+    (?v . ,(or org-html-validation-link ""))))
+
+
 (defun org-reveal--build-pre/postamble (type info)
   "Return document preamble or postamble as a string, or nil."
   (let ((section (plist-get info (intern (format ":reveal-%s" type))))
@@ -684,7 +733,7 @@ info is a plist holding export options."
 <div class=\"slides\">
 <section>
 "
-   (format-spec org-reveal-title-slide-template (org-html-format-spec info))
+   (format-spec org-reveal-title-slide-template (reveal-html-format-spec info))
    "</section>\n"
    contents
    "</div>
