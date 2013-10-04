@@ -80,7 +80,7 @@
     (src-block . org-reveal-src-block)
     (template . org-reveal-template))
 
-  :export-block '("REVEAL" "NOTES")
+  :export-block '("REVEAL" "NOTES" "CODE")
   )
 
 (defcustom org-reveal-root "./reveal.js"
@@ -253,8 +253,15 @@ CONTENTS is nil. NFO is a plist holding contextual information."
             (org-export-string-as block-string 'html 'body-only)
             "</aside>"))
           ((string= block-type "HTML")
-           (org-remove-indentation block-string)))))
-                 
+           (org-remove-indentation block-string))
+          ((string= block-type "CODE")
+           (concat
+            "<pre><code>"
+            (org-remove-indentation block-string)
+            "</code></pre>")
+           )
+          )))
+
 (defun org-reveal-headline (headline contents info)
   "Transcode a HEADLINE element from Org to Reveal.
 CONTENTS holds the contents of the headline. INFO is a plist
