@@ -64,6 +64,7 @@
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
     (:reveal-title-image "REVEAL_TITLE_IMG" nil org-reveal-title-image t)
+    (:reveal-title-top-margin "REVEAL_TITLE_TOP_MARGIN" nil org-reveal-title-top-margin t)
     (:reveal-title-image-width "REVEAL_TITLE_IMG_WIDTH" nil org-reveal-title-image-width t)
     (:reveal-webpage "REVEAL_WEBPAGE" nil org-reveal-webpage t)
     (:reveal-venue "REVEAL_VENUE" nil org-reveal-venue t)
@@ -103,7 +104,8 @@ else get value from custom variable `org-reveal-hlevel'."
       org-reveal-hlevel)))
 
 (defcustom org-reveal-title-slide-template
-  "<h1><img src=%i width=%w></h1>
+  "<div id=\"org_reveal_title_top_margin\" style=\"height: %m\"></div>
+<h1><img src=%i width=%w></h1>
 <h3><small>%a</small></h3>
 <p><small>%d, %v</small><br/>
 <small><a href=\"%p\">%p</a></small>
@@ -221,6 +223,11 @@ can be include."
 
 (defcustom org-reveal-title-image "-1"
   "Title image"
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-title-top-margin "-1"
+  "Title top margin"
   :group 'org-export-reveal
   :type 'string)
 
@@ -650,6 +657,7 @@ the plist used as a communication channel."
 used in the preamble or postamble."
   `((?t . ,(org-export-data (plist-get info :title) info))
     (?i . ,(plist-get info :reveal-title-image))
+    (?m . ,(plist-get info :reveal-title-top-margin))
     (?w . ,(plist-get info :reveal-title-image-width))
     (?v . ,(plist-get info :reveal-venue))
     (?p . ,(org-element-interpret-data (plist-get info :reveal-webpage)))
