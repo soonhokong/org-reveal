@@ -107,7 +107,7 @@ else get value from custom variable `org-reveal-hlevel'."
   "<div id=\"org_reveal_title_top_margin\" style=\"height: %m\"></div>
 <h1><img src=%i width=%w></h1>
 <h3><small>%a</small></h3>
-<p><small>%d, %v</small><br/>
+<p style=\"text-align:center\"><small>%d, %v</small><br/>
 <small><a href=\"%p\">%p</a></small>
 </p>
 "
@@ -277,18 +277,18 @@ holding contextual information."
   ;; Then add enclosing <section> tags to mark slides.
   (setq contents (or contents ""))
   (let* ((numberedp (org-export-numbered-headline-p headline info))
-	 (level (org-export-get-relative-level headline info))
-	 (text (org-export-data (org-element-property :title headline) info))
-	 (todo (and (plist-get info :with-todo-keywords)
-		    (let ((todo (org-element-property :todo-keyword headline)))
-		      (and todo (org-export-data todo info)))))
-	 (todo-type (and todo (org-element-property :todo-type headline)))
-	 (tags (and (plist-get info :with-tags)
-		    (org-export-get-tags headline info)))
-	 (priority (and (plist-get info :with-priority)
-			(org-element-property :priority headline)))
-	 ;; Create the headline text.
-	 (full-text (org-html-format-headline--wrap headline info)))
+         (level (org-export-get-relative-level headline info))
+         (text (org-export-data (org-element-property :title headline) info))
+         (todo (and (plist-get info :with-todo-keywords)
+                    (let ((todo (org-element-property :todo-keyword headline)))
+                      (and todo (org-export-data todo info)))))
+         (todo-type (and todo (org-element-property :todo-type headline)))
+         (tags (and (plist-get info :with-tags)
+                    (org-export-get-tags headline info)))
+         (priority (and (plist-get info :with-priority)
+                        (org-element-property :priority headline)))
+         ;; Create the headline text.
+         (full-text (org-html-format-headline--wrap headline info)))
     (cond
      ;; Case 1: This is a footnote section: ignore it.
      ((org-element-property :footnote-section-p headline) nil)
@@ -298,19 +298,19 @@ holding contextual information."
      ((org-export-low-level-p headline info)
       ;; Build the real contents of the sub-tree.
       (let* ((type (if numberedp 'ordered 'unordered))
-	     (itemized-body (org-reveal-format-list-item
-			     contents type nil nil 'none full-text)))
-	(concat
-	 (and (org-export-first-sibling-p headline info)
-	      (org-html-begin-plain-list type))
-	 itemized-body
-	 (and (org-export-last-sibling-p headline info)
-	      (org-html-end-plain-list type)))))
+             (itemized-body (org-reveal-format-list-item
+                             contents type nil nil 'none full-text)))
+        (concat
+         (and (org-export-first-sibling-p headline info)
+              (org-html-begin-plain-list type))
+         itemized-body
+         (and (org-export-last-sibling-p headline info)
+              (org-html-end-plain-list type)))))
      ;; Case 3. Standard headline.  Export it as a section.
      (t
       (let* ((level1 (+ level (1- org-html-toplevel-hlevel)))
              (hlevel (org-reveal--get-hlevel info))
-	     (first-content (car (org-element-contents headline))))
+             (first-content (car (org-element-contents headline))))
         (concat
          (if (or (/= level 1)
                  (not (org-export-first-sibling-p headline info)))
@@ -355,7 +355,7 @@ holding contextual information."
                   (org-export-last-sibling-p headline info))
              ;; Last head 1. Stop all slides.
              "</section>")))))))
-  
+
 (defgroup org-export-reveal nil
   "Options for exporting Orgmode files to reveal.js HTML pressentations."
   :tag "Org Export reveal"
@@ -420,26 +420,26 @@ custom variable `org-reveal-root'."
              (org-reveal--append-pathes root-path '("js" "reveal.min.js")))
      "<script>\n"
      (format "
-        		// Full list of configuration options available here:
-        		// https://github.com/hakimel/reveal.js#configuration
-        		Reveal.initialize({
-        			controls: %s,
-        			progress: %s,
-        			history: %s,
-        			center: %s,
-        			rollingLinks: %s,
-        			keyboard: %s,
-        			overview: %s,
-        			%s // slide width
-        			%s // slide height
-        			%s // slide margin
-        			%s // slide minimum scaling factor
-        			%s // slide maximum scaling factor
+                        // Full list of configuration options available here:
+                        // https://github.com/hakimel/reveal.js#configuration
+                        Reveal.initialize({
+                                controls: %s,
+                                progress: %s,
+                                history: %s,
+                                center: %s,
+                                rollingLinks: %s,
+                                keyboard: %s,
+                                overview: %s,
+                                %s // slide width
+                                %s // slide height
+                                %s // slide margin
+                                %s // slide minimum scaling factor
+                                %s // slide maximum scaling factor
 
 
-        			theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-        			transition: Reveal.getQueryHash().transition || '%s', // default/cube/page/concave/zoom/linear/fade/none
-        			transitionSpeed: '%s',\n"
+                                theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+                                transition: Reveal.getQueryHash().transition || '%s', // default/cube/page/concave/zoom/linear/fade/none
+                                transitionSpeed: '%s',\n"
              (if (plist-get info :reveal-control) "true" "false")
              (if (plist-get info :reveal-progress) "true" "false")
              (if (plist-get info :reveal-history) "true" "false")
@@ -462,23 +462,23 @@ custom variable `org-reveal-root'."
              (let ((max-scale (string-to-number (plist-get info :reveal-max-scale))))
                (if (> max-scale 0) (format "maxScale: %.2f," max-scale)
                  ""))
-             
+
              (plist-get info :reveal-trans)
              (plist-get info :reveal-speed))
      (format "
-        			// Optional libraries used to extend on reveal.js
-        			dependencies: [
-        				{ src: '%s', condition: function() { return !document.body.classList; } }
-        				,{ src: '%s', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
-        				,{ src: '%s', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
-        				,{ src: '%s', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-        				,{ src: '%s', async: true, condition: function() { return !!document.body.classList; } }
-        				,{ src: '%s', async: true, condition: function() { return !!document.body.classList; } }
-        				// { src: '%s', async: true, condition: function() { return !!document.body.classList; } }
-        				// { src: '%s', async: true, condition: function() { return !!document.body.classList; } }
-         				%s
-        			]
-        		});\n"
+                                // Optional libraries used to extend on reveal.js
+                                dependencies: [
+                                        { src: '%s', condition: function() { return !document.body.classList; } }
+                                        ,{ src: '%s', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
+                                        ,{ src: '%s', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
+                                        ,{ src: '%s', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                                        ,{ src: '%s', async: true, condition: function() { return !!document.body.classList; } }
+                                        ,{ src: '%s', async: true, condition: function() { return !!document.body.classList; } }
+                                        // { src: '%s', async: true, condition: function() { return !!document.body.classList; } }
+                                        // { src: '%s', async: true, condition: function() { return !!document.body.classList; } }
+                                        %s
+                                ]
+                        });\n"
                (org-reveal--append-path lib-js-dir-name "classList.js")
                (org-reveal--append-path markdown-dir-name "showdown.js")
                (org-reveal--append-path markdown-dir-name "markdown.js")
@@ -535,7 +535,7 @@ Add proper internal link to each headline."
 
 (defun org-reveal-toc (depth info)
   "Build a slide of table of contents."
-  (format 
+  (format
    "<section>\n%s</section>\n"
    (org-reveal-toc-headlines
     (org-export-collect-headlines info depth)
@@ -613,7 +613,7 @@ contextual information."
      (lambda (x) (apply 'org-reveal-parse-token x))
      tokens
      "")))
-    
+
 
 (defun org-reveal-keyword (keyword contents info)
   "Transcode a KEYWORD element from Org to HTML,
@@ -632,8 +632,8 @@ the plist used as a communication channel."
   (let ((parent (org-export-get-parent paragraph)))
     (cond
      ((and (eq (org-element-type parent) 'item)
-	   (= (org-element-property :begin paragraph)
-	      (org-element-property :contents-begin parent)))
+           (= (org-element-property :begin paragraph)
+              (org-element-property :contents-begin parent)))
       ;; leading paragraph in a list item have no tags
       contents)
      ((org-html-standalone-image-p paragraph info)
@@ -688,7 +688,7 @@ used in the preamble or postamble."
                (format-spec section spec))))
         (when (org-string-nw-p section-contents)
            (org-element-normalize-string section-contents))))))
-        
+
 
 (defun org-reveal-section (section contents info)
   "Transcode a SECTION element from Org to Reveal.
@@ -704,22 +704,22 @@ contextual information."
   (if (org-export-read-attribute :attr_html src-block :textarea)
       (org-html--textarea-block src-block)
     (let ((lang (org-element-property :language src-block))
-	  (caption (org-export-get-caption src-block))
-	  (code (org-html-format-code src-block info))
+          (caption (org-export-get-caption src-block))
+          (code (org-html-format-code src-block info))
           (frag (org-export-read-attribute :attr_reveal src-block :frag))
-	  (label (let ((lbl (org-element-property :name src-block)))
-		   (if (not lbl) ""
-		     (format " id=\"%s\""
-			     (org-export-solidify-link-text lbl))))))
+          (label (let ((lbl (org-element-property :name src-block)))
+                   (if (not lbl) ""
+                     (format " id=\"%s\""
+                             (org-export-solidify-link-text lbl))))))
       (if (not lang) (format "<pre class=\"%s\"%s>\n%s</pre>"
                              (if frag (format "fragment %s" frag) "example")
                              label code)
-	(format
-	 "<div class=\"org-src-container\">\n%s%s\n</div>"
-	 (if (not caption) ""
-	   (format "<label class=\"org-src-name\">%s</label>"
-		   (org-export-data caption info)))
-	 (format "\n<pre class=\"%s\"%s>%s</pre>"
+        (format
+         "<div class=\"org-src-container\">\n%s%s\n</div>"
+         (if (not caption) ""
+           (format "<label class=\"org-src-name\">%s</label>"
+                   (org-export-data caption info)))
+         (format "\n<pre class=\"%s\"%s>%s</pre>"
                  (if frag
                      (format "fragment %s" frag)
                    (format "src src-%s" lang))
