@@ -320,7 +320,7 @@ holding contextual information."
          (priority (and (plist-get info :with-priority)
                         (org-element-property :priority headline)))
          ;; Create the headline text.
-	 (full-text (org-html-format-headline--wrap headline info)))
+         (full-text (org-html-format-headline--wrap headline info)))
     (cond
      ;; Case 1: This is a footnote section: ignore it.
      ((org-element-property :footnote-section-p headline) nil)
@@ -766,10 +766,13 @@ contextual information."
          (if (not caption) ""
            (format "<label class=\"org-src-name\">%s</label>"
                    (org-export-data caption info)))
-         (format "\n<pre %s%s>%s</pre>"
-                 (or (frag-class frag)
-                     (format " class=\"src src-%s\"" lang))
-                 label code))))))
+         (if (string= lang "lean")
+             (format "\n<juicy-ace-editor mode=\"ace/mode/lean\">%s</juicy-ace-editor>"
+                     code)
+           (format "\n<pre %s%s>%s</pre>"
+                   (or (frag-class frag)
+                       (format " class=\"src src-%s\"" lang))
+                   label code)))))))
 
 (defun org-reveal-quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
