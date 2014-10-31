@@ -719,11 +719,14 @@ contextual information."
          (if (not caption) ""
            (format "<label class=\"org-src-name\">%s</label>"
                    (org-export-data caption info)))
-         (format "\n<pre class=\"%s\"%s>%s</pre>"
-                 (if frag
-                     (format "fragment %s" frag)
-                   (format "src src-%s" lang))
-                 label code))))))
+         (if (string= lang "lean")
+             (format "\n<juicy-ace-editor theme=\"ace/theme/monokai\" mode=\"ace/mode/lean\">%s</juicy-ace-editor>"
+                     code)
+           (format "\n<pre class=\"%s\"%s>%s</pre>"
+                   (if frag
+                       (format "fragment %s" frag)
+                     (format "src src-%s" lang))
+                   label code)))))))
 
 (defun org-reveal-template (contents info)
   "Return complete document string after HTML conversion.
