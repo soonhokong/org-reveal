@@ -720,7 +720,7 @@ contextual information."
            (format "<label class=\"org-src-name\">%s</label>"
                    (org-export-data caption info)))
          (if (string= lang "lean")
-             (format "\n<juicy-ace-editor theme=\"ace/theme/monokai\" mode=\"ace/mode/lean\">%s</juicy-ace-editor>"
+             (format "\n<juicy-ace-editor mode=\"ace/mode/lean\">%s</juicy-ace-editor>"
                      code)
            (format "\n<pre class=\"%s\"%s>%s</pre>"
                    (if frag
