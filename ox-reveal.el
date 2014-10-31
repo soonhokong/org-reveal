@@ -74,6 +74,10 @@
     (:reveal-multiplex-url "REVEAL_MULTIPLEX_URL" nil org-reveal-multiplex-url nil)
     (:reveal-multiplex-socketio-url "REVEAL_MULTIPLEX_SOCKETIO_URL" nil org-reveal-multiplex-socketio-url nil)
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
+    (:reveal-title-image "REVEAL_TITLE_IMG" nil org-reveal-title-image t)
+    (:reveal-title-image-width "REVEAL_TITLE_IMG_WIDTH" nil org-reveal-title-image-width t)
+    (:reveal-webpage "REVEAL_WEBPAGE" nil org-reveal-webpage t)
+    (:reveal-venue "REVEAL_VENUE" nil org-reveal-venue t)
     )
 
   :translate-alist
