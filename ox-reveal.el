@@ -84,6 +84,8 @@
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
     (:reveal-highlight-css "REVEAL_HIGHLIGHT_CSS" nil org-reveal-highlight-css nil)
+    (:reveal-ace-theme "REVEAL_ACE_THEME" nil org-reveal-ace-theme nil)
+    (:reveal-ace-fontsize "REVEAL_ACE_FONTSIZE" nil org-reveal-ace-fontsize nil)
     )
 
   :translate-alist
@@ -349,6 +351,15 @@ content."
   registering the completion"
   :group 'org-export-reveal
   :type 'string)
+(defcustom org-reveal-ace-theme "ace/theme/subatomic"
+  "Default Ace Editor Theme"
+  :group 'org-export-reveal
+  :type  'string)
+
+(defcustom org-reveal-ace-fontsize "15px"
+  "Default Ace Editor Fontsize"
+  :group 'org-export-reveal
+  :type  'string)
 
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
@@ -930,7 +941,9 @@ contextual information."
            (format "<label class=\"org-src-name\">%s</label>"
                    (org-export-data caption info)))
          (if (string= lang "lean")
-             (format "\n<juicy-ace-editor mode=\"ace/mode/lean\">%s</juicy-ace-editor>"
+             (format "\n<juicy-ace-editor mode=\"ace/mode/lean\" theme=\"%s\" fontsize=\"%s\">%s</juicy-ace-editor>"
+                     (plist-get info :reveal-ace-theme)
+                     (plist-get info :reveal-ace-fontsize)
                      code)
            (format "\n<pre %s%s>%s</pre>"
                    (or (frag-class frag)
